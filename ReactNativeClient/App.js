@@ -8,9 +8,6 @@
 
 import React from 'react';
 import IssueList from './IssueList.js';
-// import type {Node} from 'react';
-
-import { View, Text } from 'react-native';
 
 
 
@@ -19,9 +16,9 @@ import {
   ScrollView,
   StatusBar,
   StyleSheet,
-  // Text,
+  Text,
   useColorScheme,
-  // View,
+  View,
 } from 'react-native';
 
 import {
@@ -39,10 +36,10 @@ export default class App extends React.Component
   render()
   {
     return(
-    <view>
+    <View>
       <Text>Issue Tracker</Text>
       <IssueList/>
-    </view>);
+    </View>);
 
   }
 }
