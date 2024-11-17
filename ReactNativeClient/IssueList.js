@@ -1,11 +1,14 @@
 import React from 'react';
 import {
+  SafeAreaView,
+  ScrollView,
+  StatusBar,
   StyleSheet,
   Text,
   TextInput,
   Button,
+  useColorScheme,
   View,
-  ScrollView,
 } from 'react-native';
 
 const dateRegex = new RegExp('^\\d\\d\\d\\d-\\d\\d-\\d\\d');
@@ -17,12 +20,14 @@ function jsonDateReviver(key, value) {
 
 async function graphQLFetch(query, variables = {}) {
   try {
+    /* Q4: Start Coding here. State the correct IP/port */
     const response = await fetch('http://10.0.2.2:3000/graphql', {
-      // change the ip
+      // const response = await fetch('http://localhost:3000/graphql', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ query, variables }),
     });
+    /* Q4: Code Ends here */
     const body = await response.text();
     const result = JSON.parse(body, jsonDateReviver);
 
@@ -44,17 +49,19 @@ async function graphQLFetch(query, variables = {}) {
 class IssueFilter extends React.Component {
   render() {
     return (
-      <View>
+      <>
         {/* Q1: Start Coding here. */}
-        <Text>Issue Filter Placeholder</Text>
+        <View>
+          <Text>Issue Filter Placeholder</Text>
+        </View>
         {/* Q1: Code ends here */}
-      </View>
+      </>
     );
   }
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 16, paddingTop: 30, backgroundColor: '#fff' },
+  container: { padding: 16, paddingTop: 30, backgroundColor: '#fff' },
   header: { flexDirection: 'row', height: 50, backgroundColor: '#537791' },
   headerCell: {
     flex: 1,
@@ -78,39 +85,49 @@ const styles = StyleSheet.create({
 
 function IssueRow(props) {
   const issue = props.issue;
+  /* Q2: Coding Starts here. Create a row of data in a variable */
+  const data = [
+    issue.id.toString(),
+    issue.title,
+    issue.status,
+    issue.owner,
+    issue.created.toDateString(),
+    issue.effort ? issue.effort.toString() : '',
+    issue.due ? issue.due.toDateString() : '',
+  ];
+  /* Q2: Coding Ends here. */
   return (
     <View style={styles.row}>
-      {/* let data be included in <Text> 中 */}
-      <Text style={styles.cell}>{issue.id}</Text>
-      <Text style={styles.cell}>{issue.title}</Text>
-      <Text style={styles.cell}>{issue.status}</Text>
-      <Text style={styles.cell}>{issue.owner}</Text>
-      <Text style={styles.cell}>{issue.created.toDateString()}</Text>
-      <Text style={styles.cell}>{issue.effort ? issue.effort.toString() : ''}</Text>
-      <Text style={styles.cell}>{issue.due ? issue.due.toDateString() : ''}</Text>
+      {/* Q2: Start Coding here. Add Logic to render a row */}
+      {data.map((cellData, index) => (
+        <Text style={styles.cell} key={index}>
+          {cellData}
+        </Text>
+      ))}
+      {/* Q2: Coding Ends here. */}
     </View>
   );
 }
 
 function IssueTable(props) {
-  const { issues } = props;
+  /* Q2: Start Coding here. Add Logic to initialize table header */
+  const tableHead = ['ID', 'Title', 'Status', 'Owner', 'Created', 'Effort', 'Due'];
+  /* Q2: Coding Ends here. */
 
   return (
     <View style={styles.container}>
       {/* Q2: Start Coding here to render the table header/rows. */}
-      {/* tablehead */}
+      {/* head */}
       <View style={styles.header}>
-        <Text style={styles.headerCell}>ID</Text>
-        <Text style={styles.headerCell}>Title</Text>
-        <Text style={styles.headerCell}>Status</Text>
-        <Text style={styles.headerCell}>Owner</Text>
-        <Text style={styles.headerCell}>Created</Text>
-        <Text style={styles.headerCell}>Effort</Text>
-        <Text style={styles.headerCell}>Due</Text>
+        {tableHead.map((headCell, index) => (
+          <Text style={styles.headerCell} key={index}>
+            {headCell}
+          </Text>
+        ))}
       </View>
-      {/* rowsdata */}
+      {/* datarows */}
       <ScrollView style={styles.dataWrapper}>
-        {issues.map((issue) => (
+        {props.issues.map((issue) => (
           <IssueRow key={issue.id} issue={issue} />
         ))}
       </ScrollView>
@@ -123,13 +140,16 @@ class IssueAdd extends React.Component {
   constructor() {
     super();
     this.handleSubmit = this.handleSubmit.bind(this);
+    /* Q3: Start Coding here. Create State to hold inputs */
     this.state = {
       title: '',
       owner: '',
       effort: '',
     };
+    /* Q3: Code Ends here. */
   }
 
+  /* Q3: Start Coding here. Add functions to hold/set state input based on changes in TextInput */
   handleTitleChange = (text) => {
     this.setState({ title: text });
   };
@@ -141,8 +161,10 @@ class IssueAdd extends React.Component {
   handleEffortChange = (text) => {
     this.setState({ effort: text });
   };
+  /* Q3: Code Ends here. */
 
   handleSubmit() {
+    /* Q3: Start Coding here. Create an issue from state variables and call createIssue. Also, clear input field in front-end */
     const issue = {
       title: this.state.title,
       owner: this.state.owner,
@@ -151,12 +173,13 @@ class IssueAdd extends React.Component {
     };
     this.props.createIssue(issue);
     this.setState({ title: '', owner: '', effort: '' });
+    /* Q3: Code Ends here. */
   }
 
   render() {
     return (
       <View>
-        {/* Q3: Start Coding here. */}
+        {/* Q3: Start Coding here. Create TextInput field, populate state variables. Create a submit button, and on submit, trigger handleSubmit. */}
         <TextInput
           placeholder="Title"
           value={this.state.title}
@@ -184,16 +207,20 @@ class BlackList extends React.Component {
   constructor() {
     super();
     this.handleSubmit = this.handleSubmit.bind(this);
+    /* Q4: Start Coding here. Create State to hold inputs */
     this.state = {
       owner: '',
     };
+    /* Q4: Code Ends here. */
   }
-
+  /* Q4: Start Coding here. Add functions to hold/set state input based on changes in TextInput */
   handleOwnerChange = (text) => {
     this.setState({ owner: text });
   };
+  /* Q4: Code Ends here. */
 
   async handleSubmit() {
+    /* Q4: Start Coding here. Create an issue from state variables and issue a query. Also, clear input field in front-end */
     const query = `mutation addToBlackList($owner: String!) {
       addToBlackList(owner: $owner)
     }`;
@@ -203,12 +230,13 @@ class BlackList extends React.Component {
       alert(`Added ${this.state.owner} to blacklist`);
       this.setState({ owner: '' });
     }
+    /* Q4: Code Ends here. */
   }
 
   render() {
     return (
       <View>
-        {/* Q4: Start Coding here. */}
+        {/* Q4: Start Coding here. Create TextInput field, populate state variables. Create a submit button, and on submit, trigger handleSubmit. */}
         <TextInput
           placeholder="Owner to Blacklist"
           value={this.state.owner}
