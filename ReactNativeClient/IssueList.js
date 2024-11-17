@@ -1,16 +1,12 @@
 import React from 'react';
 import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
   StyleSheet,
   Text,
   TextInput,
   Button,
-  useColorScheme,
   View,
+  ScrollView,
 } from 'react-native';
-
 
 const dateRegex = new RegExp('^\\d\\d\\d\\d-\\d\\d-\\d\\d');
 
@@ -21,14 +17,12 @@ function jsonDateReviver(key, value) {
 
 async function graphQLFetch(query, variables = {}) {
   try {
-    /****** Q4: Start Coding here. State the correct IP/port******/
     const response = await fetch('http://10.0.2.2:3000/graphql', {
-     // const response = await fetch('http://localhost:3000/graphql', {
+      // change the ip
       method: 'POST',
-      headers: { 'Content-Type': 'application/json'},
-      body: JSON.stringify({ query, variables })
-        /****** Q4: Code Ends here******/
-  });
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ query, variables }),
+    });
     const body = await response.text();
     const result = JSON.parse(body, jsonDateReviver);
 
@@ -50,19 +44,17 @@ async function graphQLFetch(query, variables = {}) {
 class IssueFilter extends React.Component {
   render() {
     return (
-      <>
+      <View>
         {/* Q1: Start Coding here. */}
-        <View>
-          <Text>Issue Filter Placeholder</Text>
-        </View>
+        <Text>Issue Filter Placeholder</Text>
         {/* Q1: Code ends here */}
-      </>
+      </View>
     );
   }
 }
 
 const styles = StyleSheet.create({
-  container: { padding: 16, paddingTop: 30, backgroundColor: '#fff' },
+  container: { flex: 1, padding: 16, paddingTop: 30, backgroundColor: '#fff' },
   header: { flexDirection: 'row', height: 50, backgroundColor: '#537791' },
   headerCell: {
     flex: 1,
@@ -86,53 +78,43 @@ const styles = StyleSheet.create({
 
 function IssueRow(props) {
   const issue = props.issue;
-  {/****** Q2: Coding Starts here. Create a row of data in a variable******/}
-    const data = [
-    issue.id.toString(),
-    issue.title,
-    issue.status,
-    issue.owner,
-    issue.created.toDateString(),
-    issue.effort ? issue.effort.toString() : '',
-    issue.due ? issue.due.toDateString() : '',
-  ];
-  {/****** Q2: Coding Ends here.******/}
   return (
     <View style={styles.row}>
-      {/****** Q2: Start Coding here. Add Logic to render a row  ******/}
-      {data.map((cellData, index) => (
-        <Text style={styles.cell} key={index}>
-          {cellData}
-        </Text>
-      ))}
-      {/****** Q2: Coding Ends here. ******/}
+      {/* let data be included in <Text> 中 */}
+      <Text style={styles.cell}>{issue.id}</Text>
+      <Text style={styles.cell}>{issue.title}</Text>
+      <Text style={styles.cell}>{issue.status}</Text>
+      <Text style={styles.cell}>{issue.owner}</Text>
+      <Text style={styles.cell}>{issue.created.toDateString()}</Text>
+      <Text style={styles.cell}>{issue.effort ? issue.effort.toString() : ''}</Text>
+      <Text style={styles.cell}>{issue.due ? issue.due.toDateString() : ''}</Text>
     </View>
   );
 }
 
 function IssueTable(props) {
-  {/****** Q2: Start Coding here. Add Logic to initalize table header  ******/}
-  const tableHead = ['ID', 'Title', 'Status', 'Owner', 'Created', 'Effort', 'Due'];
-  {/****** Q2: Coding Ends here. ******/}
+  const { issues } = props;
 
   return (
     <View style={styles.container}>
-      {/****** Q2: Start Coding here to render the table header/rows.**********/}
-      {/* head */}
+      {/* Q2: Start Coding here to render the table header/rows. */}
+      {/* tablehead */}
       <View style={styles.header}>
-        {tableHead.map((headCell, index) => (
-          <Text style={styles.headerCell} key={index}>
-            {headCell}
-          </Text>
-        ))}
+        <Text style={styles.headerCell}>ID</Text>
+        <Text style={styles.headerCell}>Title</Text>
+        <Text style={styles.headerCell}>Status</Text>
+        <Text style={styles.headerCell}>Owner</Text>
+        <Text style={styles.headerCell}>Created</Text>
+        <Text style={styles.headerCell}>Effort</Text>
+        <Text style={styles.headerCell}>Due</Text>
       </View>
-      {/* datarows*/}
+      {/* rowsdata */}
       <ScrollView style={styles.dataWrapper}>
-        {props.issues.map((issue) => (
+        {issues.map((issue) => (
           <IssueRow key={issue.id} issue={issue} />
         ))}
       </ScrollView>
-      {/****** Q2: Coding Ends here. ******/}
+      {/* Q2: Coding Ends here. */}
     </View>
   );
 }
@@ -141,16 +123,13 @@ class IssueAdd extends React.Component {
   constructor() {
     super();
     this.handleSubmit = this.handleSubmit.bind(this);
-    /****** Q3: Start Coding here. Create State to hold inputs******/
     this.state = {
       title: '',
       owner: '',
       effort: '',
     };
-    /****** Q3: Code Ends here. ******/
   }
 
-  /****** Q3: Start Coding here. Add functions to hold/set state input based on changes in TextInput******/
   handleTitleChange = (text) => {
     this.setState({ title: text });
   };
@@ -162,10 +141,8 @@ class IssueAdd extends React.Component {
   handleEffortChange = (text) => {
     this.setState({ effort: text });
   };
-  /****** Q3: Code Ends here. ******/
 
   handleSubmit() {
-    /****** Q3: Start Coding here. Create an issue from state variables and call createIssue. Also, clear input field in front-end******/
     const issue = {
       title: this.state.title,
       owner: this.state.owner,
@@ -174,13 +151,12 @@ class IssueAdd extends React.Component {
     };
     this.props.createIssue(issue);
     this.setState({ title: '', owner: '', effort: '' });
-    /****** Q3: Code Ends here. ******/
   }
 
   render() {
     return (
       <View>
-        {/****** Q3: Start Coding here. Create TextInput field, populate state variables. Create a submit button, and on submit, trigger handleSubmit.*******/}
+        {/* Q3: Start Coding here. */}
         <TextInput
           placeholder="Title"
           value={this.state.title}
@@ -198,30 +174,26 @@ class IssueAdd extends React.Component {
           keyboardType="numeric"
         />
         <Button title="Add Issue" onPress={this.handleSubmit} />
-        {/****** Q3: Code Ends here. ******/}
+        {/* Q3: Code Ends here. */}
       </View>
     );
   }
 }
 
 class BlackList extends React.Component {
-  constructor()
-   {   super();
+  constructor() {
+    super();
     this.handleSubmit = this.handleSubmit.bind(this);
-    /****** Q4: Start Coding here. Create State to hold inputs******/
     this.state = {
       owner: '',
     };
-    /****** Q4: Code Ends here. ******/
   }
-  /****** Q4: Start Coding here. Add functions to hold/set state input based on changes in TextInput******/
+
   handleOwnerChange = (text) => {
     this.setState({ owner: text });
   };
-  /****** Q4: Code Ends here. ******/
 
   async handleSubmit() {
-    /****** Q4: Start Coding here. Create an issue from state variables and issue a query. Also, clear input field in front-end******/
     const query = `mutation addToBlackList($owner: String!) {
       addToBlackList(owner: $owner)
     }`;
@@ -231,20 +203,19 @@ class BlackList extends React.Component {
       alert(`Added ${this.state.owner} to blacklist`);
       this.setState({ owner: '' });
     }
-    /****** Q4: Code Ends here. ******/
   }
 
   render() {
     return (
       <View>
-        {/****** Q4: Start Coding here. Create TextInput field, populate state variables. Create a submit button, and on submit, trigger handleSubmit.*******/}
+        {/* Q4: Start Coding here. */}
         <TextInput
           placeholder="Owner to Blacklist"
           value={this.state.owner}
           onChangeText={this.handleOwnerChange}
         />
         <Button title="Add to Blacklist" onPress={this.handleSubmit} />
-        {/****** Q4: Code Ends here. ******/}
+        {/* Q4: Code Ends here. */}
       </View>
     );
   }
@@ -286,31 +257,27 @@ export default class IssueList extends React.Component {
     if (data) {
       this.loadData();
     }
-    }
+  }
 
-
-    render() {
+  render() {
     return (
       <View>
-        {/****** Q1: Start Coding here. ******/}
+        {/* Q1: Start Coding here. */}
         <IssueFilter />
-        {/****** Q1: Code ends here ******/}
+        {/* Q1: Code ends here */}
 
-
-        {/****** Q2: Start Coding here. ******/}
+        {/* Q2: Start Coding here. */}
         <IssueTable issues={this.state.issues} />
-        {/****** Q2: Code ends here ******/}
+        {/* Q2: Code ends here */}
 
-
-        {/****** Q3: Start Coding here. ******/}
+        {/* Q3: Start Coding here. */}
         <IssueAdd createIssue={this.createIssue} />
-        {/****** Q3: Code Ends here. ******/}
+        {/* Q3: Code Ends here. */}
 
-        {/****** Q4: Start Coding here. ******/}
+        {/* Q4: Start Coding here. */}
         <BlackList />
-        {/****** Q4: Code Ends here. ******/}
+        {/* Q4: Code Ends here. */}
       </View>
-      
     );
   }
 }
